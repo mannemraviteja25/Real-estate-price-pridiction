@@ -1,0 +1,163 @@
+#importig libraries
+import numpy as pandas
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import r2_score
+
+# problem statement 
+# predict the price of houese based on given features
+
+# loading dataset
+df = pd.read_csv('Housing.csv')
+
+# EDA - exploratory data analysis 
+#df.head()
+#df.tail()
+#df.shape
+#df.columns
+#df.info()  --> all should in numeric if not convert them to numeric
+#df.nunique()  ---> givs the details of unique data
+#df.isnull().sum().sum()
+
+#df.mainroad.unique() ----> unique values in mainroad column and its type
+#df.mainroad.value_counts() ---> no. of yes and no's
+#conver yes --> 1 and no to --> 0
+
+# mainroad conversion
+df.mainroad.replace(['yes','no'],[1,0],inplace=True)
+# guestroom conversion
+df.guestroom.replace(['yes','no'],[1,0],inplace=True)
+# basement conversion
+df.basement.replace(['yes','no'],[1,0],inplace=True)
+# hotwaterheating
+df.hotwaterheating.replace(['yes','no'],[1,0],inplace=True)
+# air conditioning 
+df.airconditioning.replace(['yes','no'],[1,0],inplace=True)
+# prefarea
+df.prefarea.replace(['yes','no'],[1,0],inplace=True)
+# print(df.to_string())
+# furnishingstatus
+df.furnishingstatus.replace(['furnished','unfurnished','semi-furnished'],[1,0,2],inplace=True)
+
+#df.head()
+#df.dtypes --> if anything in float convert it into int
+
+# plotting
+#print(" Gaphs ")
+'''
+plt.figure(figsize=(10,10))
+sns.heatmap(df.corr(),annot=True,cmap='Greens')
+plt.title('Correlation',fontsize=24)
+
+plt.figure(figsize=(10,10))
+plt.scatter(df.area,df.price)
+plt.title('Price vs area',fontsize=24)
+
+
+# pairplot
+#sns.pairplot(df)
+ 
+#box plot for outliers
+plt.figure(figsize=(10,10))
+df.boxplot()
+plt.title('box plot')
+
+#plt.figure(figsize=(10,10))
+#df[['area']].boxplot()
+
+#histogram plot
+plt.figure(figsize=(10,10))
+sns.histplot(df.price)
+plt.title("Histogram")
+
+#bar graph to check strength
+#plt.figure(figsize=(10,10))
+#df.basement.value_counts().plot.bar()'''
+
+# ML
+x = df[df.columns[1:]] #target is at first else use drop
+#df.drop('price',axis=1)
+y = df.price
+#input 2d output 1d
+x_train,x_test,y_train,y_test = train_test_split(x,y,test_size=0.2,random_state=1)
+
+#coosing the model
+model = LinearRegression()
+
+#training
+model.fit(x_train.values,y_train)
+
+#checking intercept
+#print('Model intercept')
+#print(model.intercept_)
+
+#coefficient values
+#print('Model coefficients')
+#print(model.coef_)
+
+#prediction
+#pred_y = model.predict(x_test)
+
+#newdf = pd.DataFrame({'Actual value':y_test,'Predicted value':pred_y})
+#print(newdf)
+
+#plt.scatter(newdf['Actual value'],newdf['Predicted value'])
+#plt.xlabel('Actual value')
+#plt.ylabel('Predicted value')
+#plt.title('Actual vs preicted')
+
+#newdf.corr()
+
+#heat map
+#sns.heatmap(newdf.corr(),annot=True,cmap='magma')
+
+#testing the model
+#print("Accuracy is ")
+#print(r2_score(y_test,pred_y))
+
+
+AREA = int(input("Area required : "))
+
+BEDROOMS = int(input("No. of bed rooms : "))
+
+BATHROOMS = int(input("No. of bathrooms : "))
+
+STORIES = int(input("No. of stories : "))
+
+print("Do you prefer Main Road")
+MAINROAD = 1 if input("yes or no : ")=="yes" else 0
+
+print("Do you prefer Guest Room")
+GUESTROOM = 1 if input("yes or no : ")=="yes" else 0
+
+print("Do you prefer Basement")
+BASEMENT = 1 if input("yes or no : ")=="yes" else 0
+
+print("Do you prefer Hot Water")
+HOTWATER = 1 if input("yes or no : ")=="yes" else 0
+
+print("Do you prefer Air Condition")
+AIRCONDITION =1 if input("yes or no : ")=="yes" else 0
+
+print("No. of Parking slots 0,1,2")
+PARKING = int(input("No. of parking slots : "))
+
+print("Do you prefer Prefarea")
+PREFAREA = 1 if input("yes or no : ")=="yes" else 0
+
+print("what do you prefer")
+print("Furnished    semi-furnished  Unfurnshed")
+fur = input().lower()
+if fur == 'furnished':
+  FURNISHEDSTATUS = 1
+elif fur == 'unfurnished':
+  FURNISHEDSTATUS = 0
+else:
+  FURNISHEDSTATUS = 2
+
+
+prc = model.predict([[AREA,BEDROOMS,BATHROOMS,STORIES,MAINROAD,GUESTROOM,BASEMENT,HOTWATER,AIRCONDITION,PARKING,PREFAREA,FURNISHEDSTATUS]])
+print("THE PRICE IS : ",int(prc))
